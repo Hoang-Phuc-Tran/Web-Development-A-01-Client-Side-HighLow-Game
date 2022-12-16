@@ -1,0 +1,279 @@
+<!--
+/*
+ * Project:	    A-01 : HI-LO IN JAVASCRIPT AND HTML
+ * Author:	    Hoang Phuc Tran
+ * Student ID:  8789102
+ * Date:		    September 13, 2022
+ * Description: An application as part of an HTML file that will play a typical Hi-Lo game, where
+                 the player guesses values in a specific range until the correct number is found.
+ */
+-->
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>Hi-Lo Game</title>
+    <script type="text/javascript">
+      var myName = null;
+      var currentDiv = 1;
+      var minRange = 1;
+      var maxRange = null;
+      var randomNum;
+
+      /*
+       * Function: getName(variable)
+       * Description : This function will display the user's name
+       * Parameters : one parameter - (variable).
+       * Returns : NONE
+       */
+      function getName(variable) {
+        document.getElementById("name1").innerHTML = variable;
+      }
+
+      /*
+       * Function: inputName()
+       * Description : This function will check if the user enters their name or not
+       * Parameters : NONE
+       * Returns : NONE
+       */
+      function inputName() {
+        // Get the name from the textbox
+        myName = document.getElementById("yourName").value;
+
+        // Check if the nam is empty
+        if (myName.length === 0) {
+          document.getElementById("inputError").innerHTML =
+            "Your name cannot be BLANK.";
+        } else {
+          // Call the nextDiv function if the name is not empty
+          nextDiv();
+          document.getElementById("yourNumber").innerHTML = getName(myName);
+          // Increase the currentDiv variable by 1
+          currentDiv++;
+        }
+      }
+
+      /*
+       * Function: nextDiv()
+       * Description : This function will change one div to other to display different pages
+       * Parameters : NONE
+       * Returns : NONE
+       */
+      function nextDiv() {
+        if (currentDiv === 1) {
+          document.getElementById("section1").style.display = "none";
+          document.getElementById("section2").style.display = "block";
+        }
+        if (currentDiv === 2) {
+          document.getElementById("section2").style.display = "none";
+          document.getElementById("section3").style.display = "block";
+        }
+        if (currentDiv === 3) {
+          document.getElementById("section3").style.display = "none";
+          document.getElementById("section4").style.display = "block";
+        }
+        // this Div is used to check if the user want to start a new game
+        if (currentDiv === 4) {
+          document.getElementById("section4").style.display = "none";
+          document.getElementById("section2").style.display = "block";
+          document.body.style.background = "none";
+          currentDiv = 2;
+          // reset the minRange to prepare for the new game
+          minRange = 1;
+        }
+      }
+
+      // This variable is used to check the numbers only
+      var num = /^[0-9]+$/;
+      // This variable is used to check the alphabet only
+      var alpha = /^[a-z A-Z]+$/;
+
+      /*
+       * Function: checkMaxNumber()
+       * Description : This function will check the maximum number entered
+       * Parameters : NONE
+       * Returns : NONE
+       */
+      function checkMaxNumber() {
+        maxRange = document.getElementById("yourNumber").value;
+        document.getElementById("errorMessage").innerHTML = "";
+
+        // Check if the maximum number is null
+        if (maxRange === null || maxRange === "") {
+          document.getElementById("errorMessage").innerHTML =
+            "Your must enter a maximum number!";
+          // Check if the maximum number contains characters
+        } else if (maxRange.match(alpha)) {
+          document.getElementById("errorMessage").innerHTML =
+            "Your maximum number must only contain numbers!";
+          // Check if the maximum numer is lower than 1
+        } else if (parseInt(maxRange) < 1) {
+          document.getElementById("errorMessage").innerHTML =
+            "Your maximum number must be greater than or equal 1!";
+          // Check if the maximum number is higher than the boundary of the integer value
+        } else if (parseInt(maxRange) > Number.MAX_SAFE_INTEGER) {
+          document.getElementById("errorMessage").innerHTML =
+            "Your maximum number is too large. Try agian!";
+          // Check if the maximum number contains only numbers
+        } else if (maxRange.match(num)) {
+          errorMessage =
+            "Your allowable guessing range is any value between " +
+            minRange +
+            " and " +
+            maxRange;
+          document.getElementById("inputErrorNumber").innerHTML = errorMessage;
+          nextDiv();
+          // Generate the random number
+          randomNum = Math.floor(Math.random() * maxRange + 1);
+          currentDiv++;
+        } else {
+          document.getElementById("errorMessage").innerHTML =
+            "Your maximum number must only contain numbers!";
+        }
+        // clean up the UI from the previous use
+        document.getElementById("yourNumber").value = "";
+      }
+
+      /*
+       * Function: checkGuessNumber(guess)
+       * Description : This function will check the number that user have entered to guess
+       * Parameters : one parameter - (guess).
+       * Returns : NONE
+       */
+      function checkGuessNumber(guess) {
+        document.getElementById("inputErrorNumber").innerHTML = "";
+
+        // Check if the guess number is on range or not
+        if (guess >= minRange && guess <= parseInt(maxRange)) {
+          // if the number is larger than the random number
+          if (guess > randomNum) {
+            // the maximum range is decreased by 1
+            maxRange = parseInt(guess) - 1;
+
+            errorMessage =
+              "Your allowable guessing range is any value between " +
+              minRange +
+              " and " +
+              maxRange;
+            document.getElementById("inputErrorNumber").innerHTML =
+              errorMessage;
+            // if the number is lower than the random number
+          } else if (guess < randomNum) {
+            // the minimum range is increased by 1
+            minRange = parseInt(guess) + 1;
+
+            errorMessage =
+              "Your allowable guessing range is any value between " +
+              minRange +
+              " and " +
+              maxRange;
+            document.getElementById("inputErrorNumber").innerHTML =
+              errorMessage;
+            // Check if the number is correct
+          } else {
+            nextDiv();
+            document.body.style.background = "DarkMagenta";
+            currentDiv++;
+          }
+          // Check if the user's input is not a number
+        } else if (!guess.match(num)) {
+          errorMessage =
+            "Pls enter only the number that be greater than or equal 1! Your allowable guessing range is any value between " +
+            minRange +
+            " and " +
+            maxRange;
+          document.getElementById("inputErrorNumber").innerHTML = errorMessage;
+          // Check if the user'number is out of bound
+        } else {
+          errorMessage =
+            "Out of Range! Your allowable guessing range is any value between " +
+            minRange +
+            " and " +
+            maxRange;
+          document.getElementById("inputErrorNumber").innerHTML = errorMessage;
+        }
+        // clean up the UI from the previous use
+        document.getElementById("yourGuess").value = "";
+      }
+    </script>
+  </head>
+
+  <!--
+    This HTML code will display/prompt the user:
+    1. Get the name
+    2. Get the maximum number for game
+    3. Check the number
+    4. Play again
+  -->
+  <body>
+    <div id="section1">
+      <strong>Please enter your name</strong>&nbsp;&nbsp;
+      <input
+        name="namePrompt"
+        id="yourName"
+        type="text"
+      />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <input
+        id="button"
+        type="button"
+        value="ENTER"
+        onclick="inputName();"
+      />&nbsp;&nbsp;
+      <i id="inputError" style="color: red"></i>
+    </div>
+
+    <div id="section2" style="display: none">
+      <strong
+        ><span id="name1"></span>! Please enter the maximum number for
+        game</strong
+      >&nbsp;&nbsp;
+      <input
+        name="numberPrompt"
+        id="yourNumber"
+        type="text"
+      />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <input
+        id="button"
+        type="button"
+        value="ENTER"
+        onclick="checkMaxNumber();"
+      />&nbsp;&nbsp;
+      <i id="errorMessage" style="color: red"></i>
+    </div>
+
+    <div id="section3" style="display: none">
+      <strong>Please guess a number</strong>&nbsp;&nbsp;
+      <input
+        name="promptGuess"
+        id="yourGuess"
+        type="text"
+      />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <input
+        id="button"
+        type="button"
+        value="MAKE THIS GUESS"
+        onclick="checkGuessNumber(document.getElementById('yourGuess').value)"
+      />&nbsp;&nbsp;
+      <i id="inputErrorNumber" style="color: red"></i>
+    </div>
+
+    <div id="section4" style="display: none">
+      <h1 style="color: Cyan">
+        <strong id="winMessage" style="position: relative; left: 50%"
+          >YOU WIN</strong
+        >&nbsp;&nbsp;
+      </h1>
+      <h1>
+        <input
+          id="playAgian"
+          class="playAgianButton"
+          type="button"
+          value="PLAY AGAIN"
+          style="position: relative; left: 50%; width: 150px; height: 60px"
+          onclick="nextDiv()"
+        />&nbsp;&nbsp;
+      </h1>
+      <i id="message" style="color: red"></i>
+    </div>
+  </body>
+</html>
